@@ -26,16 +26,39 @@ def remove_todo(todo_id):
     todos = [todo for todo in todos if todo.id != todo_id]
     save_todos()
 
-def list_todos(done=None, pending=None, overdue=None):
-    now = datetime.now()
-    for todo in todos:
-        if done is not None and todo.done != done:
-            continue
-        if pending is not None and todo.done == False:
-            continue
-        if overdue is not None:
-            if todo.due_date:
-                due_date = datetime.strptime(todo.due_date, '%Y-%m-%d')
-                if due_date >= now:
-                    continue
-        print(f'[{todo.id}] {todo.title} - Priority: {todo.priority} - Due: {todo.due_date}')
+def list_todos():
+    # Logic to list todos
+    pass
+
+def search_todos(keyword):
+    return [todo for todo in todos if keyword.lower() in todo.title.lower()]
+
+def save_todos():
+    with open(TODO_FILE, 'w') as f:
+        json.dump([todo.__dict__ for todo in todos], f)
+
+def load_todos():
+    global todos
+    if os.path.exists(TODO_FILE):
+        with open(TODO_FILE, 'r') as f:
+            todos = [Todo(**data) for data in json.load(f)]
+
+if __name__ == '__main__':
+    load_todos()
+    parser = argparse.ArgumentParser(description='Todo CLI')
+    parser.add_argument('command', choices=['add', 'remove', 'list', 'search'])
+    parser.add_argument('--title', type=str, help='Title of the todo')
+    parser.add_argument('--priority', type=int, default=1, help='Priority of the todo')
+    parser.add_argument('--due_date', type=str, help='Due date of the todo')
+    parser.add_argument('--keyword', type=str, help='Keyword to search in todos')
+    args = parser.parse_args()
+
+    if args.command == 'add':
+        add_todo(args.title, args.priority, args.due_date)
+    elif args.command == 'remove':
+        remove_todo(int(args.title))
+    elif args.command == 'list':
+        print(list_todos())
+    elif args.command == 'search':
+        results = search_todos(args.keyword)
+        print(results)
