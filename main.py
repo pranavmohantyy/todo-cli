@@ -26,17 +26,21 @@ def add_todo(title, priority=1, due_date=None):
 def remove_todo(todo_id):
     global todos
     todos = [todo for todo in todos if todo.id != todo_id]
-    save_todos()
 
 
-def list_todos():
-    for todo in todos:
-        color = Style.RESET_ALL
-        if todo.due_date and datetime.strptime(todo.due_date, '%Y-%m-%d') < datetime.now():
-            color = Fore.RED
-        elif todo.priority > 1:
-            color = Fore.YELLOW
-        if todo.done:
-            color = Style.DIM
-        print(f'{color}{todo.id}. {todo.title} (Priority: {todo.priority}, Due: {todo.due_date}){Style.RESET_ALL}')
-...
+def stats():
+    total = len(todos)
+    completed = sum(1 for todo in todos if todo.done)
+    pending = total - completed
+    overdue = sum(1 for todo in todos if todo.due_date and datetime.strptime(todo.due_date, '%Y-%m-%d') < datetime.now() and not todo.done)
+    print(f'Total: {total}, Pending: {pending}, Completed: {completed}, Overdue: {overdue}')
+
+# add this to your command parsing logic
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Todo CLI')
+    parser.add_argument('--stats', action='store_true', help='Show todo stats')
+    args = parser.parse_args()
+
+    if args.stats:
+        stats()
+    # add other command handlers here
