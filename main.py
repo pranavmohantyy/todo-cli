@@ -18,6 +18,9 @@ if __name__ == '__main__':
         remove_todo(args.remove)
         print(Fore.RED + 'Todo removed!' + Style.RESET_ALL)
     elif args.list:
-        for todo in todos:
-            status = '✓' if todo.done else '✗'
-            print(f'{todo.id}: {todo.title} [{status}] (Priority: {todo.priority}, Due: {todo.due_date})')
+        if todos:
+            for todo in todos:
+                status = '✓' if todo.done else '✗'
+                print(f'{todo.id}: {todo.title} [{status}] (Priority: {todo.priority})')
+        else:
+            print('No todos found.')

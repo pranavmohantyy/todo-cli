@@ -22,7 +22,7 @@ def load_todos():
 
 def save_todos():
     with open(TODO_FILE, 'w') as f:
-        json.dump(todos, f)
+        json.dump([todo.__dict__ for todo in todos], f)
 
 
 def add_todo(title, priority=1, due_date=None):

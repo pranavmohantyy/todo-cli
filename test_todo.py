@@ -22,6 +22,4 @@ class TestTodo(unittest.TestCase):
         add_todo('Test todo')
         remove_todo(99)
         self.assertEqual(len(todos), 1)
-
-if __name__ == '__main__':
-    unittest.main()
+        self.assertEqual(todos[0].title, 'Test todo')
